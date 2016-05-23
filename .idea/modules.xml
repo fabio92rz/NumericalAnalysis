@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/I Gruppo. Algoritmi di Base.iml" filepath="$PROJECT_DIR$/I Gruppo. Algoritmi di Base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/II Gruppo. Norme Vettoriali/II Gruppo. Norme Vettoriali.iml" filepath="$PROJECT_DIR$/II Gruppo. Norme Vettoriali/II Gruppo. Norme Vettoriali.iml" />
+      <module fileurl="file://$PROJECT_DIR$/III Gruppo. Metodi Diretti/III Gruppo. Metodi Diretti.iml" filepath="$PROJECT_DIR$/III Gruppo. Metodi Diretti/III Gruppo. Metodi Diretti.iml" />
+      <module fileurl="file://$PROJECT_DIR$/IV Gruppo. Metodi Iterativi/IV Gruppo. Metodi Iterativi.iml" filepath="$PROJECT_DIR$/IV Gruppo. Metodi Iterativi/IV Gruppo. Metodi Iterativi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/V Gruppo. Interpolazione Polinomiale/V Gruppo. Interpolazione Polinomiale.iml" filepath="$PROJECT_DIR$/V Gruppo. Interpolazione Polinomiale/V Gruppo. Interpolazione Polinomiale.iml" />
+    </modules>
+  </component>
+</project>
