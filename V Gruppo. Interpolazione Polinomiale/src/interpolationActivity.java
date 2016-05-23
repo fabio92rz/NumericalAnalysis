@@ -28,6 +28,8 @@ public class interpolationActivity {
         Matrix m = new Matrix (data);
         Matrix b = new Matrix (rhs, n);
 
+        //lel
+
         Matrix s = m.solve (b);
 
         return s.getRowPackedCopy();
