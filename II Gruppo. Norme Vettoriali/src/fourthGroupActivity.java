@@ -1,7 +1,7 @@
 /**
  * Created by fabio on 17/05/2016.
  */
-public class iv_groupActivity {
+public class fourthGroupActivity {
     private static final double EPSILON = 1e-10;
 
     // is symmetric

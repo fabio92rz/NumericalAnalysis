@@ -1,7 +1,7 @@
 /**
  * Created by fabio on 17/05/2016.
  */
-public class iii_groupActivity {
+public class thirdGroupActivity {
     private static final double EPSILON = 1e-10;
 
     // Gaussian elimination with partial pivoting
