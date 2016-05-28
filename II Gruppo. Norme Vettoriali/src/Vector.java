@@ -1,3 +1,6 @@
+import java.util.Map;
+import java.util.regex.Matcher;
+
 /**
  * Created by Fabio on 28/05/2016.
  */
@@ -22,21 +25,6 @@ public class Vector {
             this.data[i] = data[i];
     }
 
-    // create a vector from either an array or a vararg list
-    // this constructor uses Java's vararg syntax to support
-    // a constructor that takes a variable number of arguments, such as
-    // Vector x = new Vector(1.0, 2.0, 3.0, 4.0);
-    // Vector y = new Vector(5.0, 2.0, 4.0, 1.0);
-/*
-    public Vector(double... data) {
-        N = data.length;
-
-        // defensive copy so that client can't alter our copy of data[]
-        this.data = new double[N];
-        for (int i = 0; i < N; i++)
-            this.data[i] = data[i];
-    }
-*/
     // return the length of the vector
     public int length() {
         return N;
@@ -118,16 +106,40 @@ public class Vector {
         double[] xdata = { 1.0, 2.0, 3.0, 4.0 };
         double[] ydata = { 5.0, 2.0, 4.0, 1.0 };
 
+        double c1 = 7.0;
+        double c2 = 4.0;
+
+        double somma = 0.0;
+        double somma2 = 0.0;
+
         Vector x = new Vector(xdata);
         Vector y = new Vector(ydata);
 
-        System.out.println("x        =  " + x);
-        System.out.println("y        =  " + y);
-        System.out.println("x + y    =  " + x.plus(y));
-        System.out.println("10x      =  " + x.times(10.0));
-        System.out.println("|x|      =  " + x.magnitude());
-        System.out.println("<x, y>   =  " + x.dot(y));
-        System.out.println("|x - y|  =  " + x.minus(y).magnitude());
+
+        for (int i = 0; i<xdata.length; i++){
+
+            somma+= Math.abs(xdata[i]);
+        }
+
+        for (int i = 0; i<xdata.length; i++){
+
+            somma2+= xdata[i]*xdata[i];
+        }
+
+        somma2 = Math.sqrt(somma2);
+
+        System.out.println("Norma vettoriale 1 =" +somma);
+        System.out.println("Norma vettoriale 2 =" +somma2);
+
+        if (somma2<=somma*c1){
+
+            if (somma2*c2>=somma){
+
+                System.out.println("Il Teorema dell'equivalenza è valido");
+
+            }
+        }
+
     }
 }
 
