@@ -38,8 +38,13 @@ public class thirdGroupActivity {
         double[][] M = invert(A);
         double[][] H = invert(B);
 
+        //trasposta non inversa
+
         // norma 1
         for (int i = 0; i < N; i++) {
+
+            sum = 0;
+
             for (int j = 0; j < N; j++) {
 
                 sum += Math.abs(M[i][j]);
@@ -47,6 +52,8 @@ public class thirdGroupActivity {
         }
 
         for (int i = 0; i < N; i++) {
+
+            sum2 = 0;
             for (int j = 0; j < N; j++) {
 
                 sum2 += Math.abs(H[i][j]);
@@ -56,6 +63,8 @@ public class thirdGroupActivity {
         //norma infinito
 
         for (int j = 0; j < N; j++) {
+
+            sum3= 0;
             for (int i = 0; i < N; i++) {
 
                 sum3 += Math.abs(M[i][j]);
@@ -65,6 +74,8 @@ public class thirdGroupActivity {
 
 
         for (int j = 0; j < N; j++) {
+
+            sum4 = 0;
             for (int i = 0; i < N; i++) {
 
                 sum4 += Math.abs(H[i][j]);
@@ -90,6 +101,8 @@ public class thirdGroupActivity {
             }
         }
         Math.sqrt(sum6);
+
+        System.out.println("Norma 1: " + sum + "\n" + sum2 + "\nnorma 2: " + sum3 + "\n" + sum4 + "\nnorma infinito: " + sum5 + "\n" + sum6);
 
 
 
