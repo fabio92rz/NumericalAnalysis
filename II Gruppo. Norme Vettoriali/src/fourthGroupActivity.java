@@ -1,3 +1,5 @@
+import Jama.Matrix;
+
 /**
  * Created by fabio on 17/05/2016.
  */
@@ -15,9 +17,9 @@ public class fourthGroupActivity {
 
 
         double[][] A = {
-                { 4, 1,  0 },
-                { 1, 5,  3 },
-                { 0, 3, 15 }
+                { 4, -1,  2 },
+                { 1, 3,  1 },
+                { 0, -3, 5 }
         };
 
         double[][] B = {
@@ -35,6 +37,10 @@ public class fourthGroupActivity {
                 { 0, 0, 0, 5, 6 }
         };
 
+        Matrix f = new Matrix(A);
+        double cond = f.cond();
+
+        System.out.println("Norma 1 = " + cond);
 
         for (int i = 0; i < A.length; i++) {
             for (int j = 0; j < A.length; j++) {
@@ -225,6 +231,24 @@ public class fourthGroupActivity {
             }
 
         }
+    }
+
+    public static double oneNorm(Matrix m) {
+
+        double largest = 0;
+
+        for (int i = 0; i < m.getColumnDimension(); i++) {
+            double sum = 0;
+            for (int j = 0; j < m.getRowDimension(); j++) {
+
+                sum += Math.abs(m.get(j, i));
+            }
+            if (sum > largest) {
+                largest = sum;
+            }
+        }
+        System.out.println("Norma 1 = " + largest);
+        return largest;
     }
 
 }

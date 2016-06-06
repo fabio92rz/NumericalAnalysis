@@ -1,17 +1,14 @@
+import Jama.Matrix;
+import org.apache.commons.math3.complex.*;
+
 /**
  * Created by fabio on 17/05/2016.
  */
 public class thirdGroupActivity {
 
+
     public static void main(String[] args) {
         int N = 8;
-
-        double sum = 0.0;
-        double sum2 = 0.0;
-        double sum3 = 0.0;
-        double sum4 = 0.0;
-        double sum5 = 0.0;
-        double sum6 = 0.0;
 
         double[][] A = { //Diagonale Dominante
                 { 10, 1, 1, 2, 3, 4, 4, 5},
@@ -35,212 +32,84 @@ public class thirdGroupActivity {
                 { 0, 0, 0, 0, 0, 0, 4, 60},
         };
 
-        double[][] M = invert(A);
-        double[][] H = invert(B);
 
-        //trasposta non inversa
+        Matrix M = new Matrix(A);
+        Matrix L = new Matrix(B);
 
-        // norma 1
-        for (int i = 0; i < N; i++) {
-
-            sum = 0;
-
-            for (int j = 0; j < N; j++) {
-
-                sum += Math.abs(M[i][j]);
-            }
-        }
-
-        for (int i = 0; i < N; i++) {
-
-            sum2 = 0;
-            for (int j = 0; j < N; j++) {
-
-                sum2 += Math.abs(H[i][j]);
-            }
-        }
-
-        //norma infinito
-
-        for (int j = 0; j < N; j++) {
-
-            sum3= 0;
-            for (int i = 0; i < N; i++) {
-
-                sum3 += Math.abs(M[i][j]);
-            }
-        }
-
-
-
-        for (int j = 0; j < N; j++) {
-
-            sum4 = 0;
-            for (int i = 0; i < N; i++) {
-
-                sum4 += Math.abs(H[i][j]);
-            }
-        }
-
-
-
-        /* norma frobenius */
-
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-
-                sum5 += (M[i][j]*M[i][j]);
-            }
-        }
-        Math.sqrt(sum5);
-
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-
-                sum6 += H[i][j]*H[i][j];
-            }
-        }
-        Math.sqrt(sum6);
-
-        System.out.println("Norma 1: " + sum + "\n" + sum2 + "\nnorma 2: " + sum3 + "\n" + sum4 + "\nnorma infinito: " + sum5 + "\n" + sum6);
-
-
-
-
+        double norm1M = oneNorm(M);
+        double norm1L = oneNorm(L);
+        double normFrobM = frobeniusNorm(M);
+        double normFrobL = frobeniusNorm(L);
+        double normInfM = infinityNorm(M);
+        double normInfL = infinityNorm(L);
 
     }
 
-    public static double[][] invert(double a[][])
 
-    {
+    public static double oneNorm(Matrix m) {
 
-        int n = a.length;
-        double x[][] = new double[n][n];
-        double b[][] = new double[n][n];
+        double largest = 0;
 
-        int index[] = new int[n];
+        for (int i = 0; i < m.getColumnDimension(); i++) {
+            double sum = 0;
+            for (int j = 0; j < m.getRowDimension(); j++) {
 
-        for (int i = 0; i < n; ++i)
-
-            b[i][i] = 1;
-        gaussian(a, index);
-
-        for (int i = 0; i < n - 1; ++i)
-
-            for (int j = i + 1; j < n; ++j)
-                for (int k = 0; k < n; ++k)
-                    b[index[j]][k]
-                            -= a[index[j]][i] * b[index[i]][k];
-
-        for (int i = 0; i < n; ++i)
-
-        {
-
-            x[n - 1][i] = b[index[n - 1]][i] / a[index[n - 1]][n - 1];
-
-            for (int j = n - 2; j >= 0; --j)
-
-            {
-
-                x[j][i] = b[index[j]][i];
-
-                for (int k = j + 1; k < n; ++k)
-
-                {
-
-                    x[j][i] -= a[index[j]][k] * x[k][i];
-                }
-
-                x[j][i] /= a[index[j]][j];
-
+                sum += Math.abs(m.get(j, i));
             }
-
+            if (sum > largest) {
+                largest = sum;
+            }
         }
-
-        return x;
-
+        System.out.println("Norma 1 = " + largest);
+        return largest;
     }
 
-    public static void gaussian(double a[][], int index[])
+    public static double pnorm(Matrix m, double p) {
 
-    {
+        if (p == 1) {
 
-        int n = index.length;
-
-        double c[] = new double[n];
-
-        for (int i = 0; i < n; ++i)
-
-            index[i] = i;
-
-        for (int i = 0; i < n; ++i)
-
-        {
-
-            double c1 = 0;
-            for (int j = 0; j < n; ++j)
-
-            {
-                double c0 = Math.abs(a[i][j]);
-
-                if (c0 > c1) c1 = c0;
-            }
-            c[i] = c1;
-
+            return oneNorm(m);
         }
 
-        int k = 0;
+        double sum = 0;
 
-        for (int j = 0; j < n - 1; ++j)
+        for (int i = 0; i < m.getRowDimension(); i++) {
+            for (int j = 0; j < m.getColumnDimension(); j++) {
+                if (p == 2) {
 
-        {
-
-            double pi1 = 0;
-
-            for (int i = j; i < n; ++i)
-
-            {
-
-                double pi0 = Math.abs(a[index[i]][j]);
-
-                pi0 /= c[index[i]];
-
-                if (pi0 > pi1)
-
-                {
-
-                    pi1 = pi0;
-
-                    k = i;
+                    Complex x =  new Complex(m.get(i,j));
+                    sum += Math.pow(x.getReal(), p) + Math.pow(x.getImaginary(), p);
 
                 }
-
+                else {
+                    sum += Math.pow(Math.abs(m.get(i, j)), p);
+                }
             }
-
-
-            int itmp = index[j];
-
-            index[j] = index[k];
-
-            index[k] = itmp;
-
-            for (int i = j + 1; i < n; ++i)
-
-            {
-
-                double pj = a[index[i]][j] / a[index[j]][j];
-
-
-                a[index[i]][j] = pj;
-
-
-                for (int l = j + 1; l < n; ++l)
-
-                    a[index[i]][l] -= pj * a[index[j]][l];
-
-            }
-
         }
+        System.out.println("Norma 2 = " + Math.pow(sum, 1.0/p));
+        return Math.pow(sum, 1.0/ p);
     }
 
+    public static double frobeniusNorm(Matrix m) {
+
+        return pnorm(m, 2);
+    }
+
+    public static double infinityNorm(Matrix m) {
+
+        double largest = 0;
+
+        for (int i = 0; i < m.getRowDimension(); i++) {
+            double sum = 0;
+            for (int j = 0; j < m.getColumnDimension(); j++) {
+                sum += Math.abs(m.get(i, j));
+            }
+            if (sum > largest) {
+                largest = sum;
+            }
+        }
+
+        System.out.println("Norma Infinito = " + largest);
+        return largest;
+    }
 }
