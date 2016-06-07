@@ -42,8 +42,6 @@ public class fourthGroupActivity {
 
     }
 
-
-
     public static double condition(Matrix m){
 
         double cond = 0;
