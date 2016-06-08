@@ -1,11 +1,12 @@
 import Jama.Matrix;
+import java.util.Arrays;
 
 /**
  * Created by Fabio on 07/06/2016.
  */
 public class secondExercise {
 
-    public static final int MAX_ITERATIONS = 10;
+    public static final int MAX_ITERATIONS = 30;
     private static final double EPSILON = 1e-10;
 
     public static void gaussSeidel(Matrix A, double[] b) {
@@ -25,11 +26,11 @@ public class secondExercise {
                     if (j != i)
                         sum += (A.get(i, j) * xOld[j]);
 
-                    sum1 += (A.get(i, j)* xNew[j]);
+                    sum1 += (A.get(i, j) * xNew[j]);
                 }
 
                 xNew[i] = (b[i] - sum - sum1) * (1 / A.get(i, i));
-                System.out.println("\n Soluzioni per GaussSeidel: X_" + (i + 1) + ": " + xNew[i]);
+                System.out.println("\n Iterazione di GaussSeidel: X_" + (i + 1) + "Soluzione: " + xNew[i]);
                 count++;
 
                 if (Math.abs(xNew[i] - xOld[i]) > EPSILON) {
@@ -41,26 +42,32 @@ public class secondExercise {
         } while (!stop && count <= MAX_ITERATIONS);
     }
 
-    public static void jacobi(Matrix A){
+    public static void jacobi(Matrix M) {
 
-        int n = 3;
         int iterations = 0;
-        double[] X = new double[A.getRowDimension()]; // Approximations
-        double[] P = new double[A.getRowDimension()]; // Prev
+        int n = M.getRowDimension();
+
+        double epsilon = 1e-15;
+        double[] X = new double[n];
+        double[] P = new double[n];
+        Arrays.fill(X, 0);
+        Arrays.fill(P, 0);
 
         while (true) {
-            for (int i = 0; i < A.getRowDimension(); i++) {
-                double sum = A.get(i, A.getRowDimension()); // b_n
+            for (int i = 0; i < n; i++) {
 
-                for (int j = 0; j < A.getColumnDimension(); j++)
+                double sum = M.get(i, i); // b_n
+
+                for (int j = 0; j < n; j++)
                     if (j != i)
-                        sum -= A.get(i, j)* P[j];
+                        sum -= M.get(i, j)* P[j];
 
-                X[i] = 1/A.get(i, i)* sum;
+                X[i] = 1 / M.get(i, i) * sum;
             }
 
-            System.out.print("\n Soluzioni per Jacobi: X_" + iterations + " = {");
-            for (int i = 0; i < A.getRowDimension(); i++)
+            System.out.print("\n Iterazione di Jacobi X_" + iterations + " Soluzioni = {");
+
+            for (int i = 0; i < n; i++)
                 System.out.print(X[i] + " ");
             System.out.println("}");
 
@@ -68,16 +75,16 @@ public class secondExercise {
             if (iterations == 1) continue;
 
             boolean stop = true;
-            for (int i = 0; i < A.getRowDimension() && stop; i++)
-                if (Math.abs(X[i] - P[i]) > EPSILON)
+            for (int i = 0; i < n && stop; i++)
+                if (Math.abs(X[i] - P[i]) > epsilon)
                     stop = false;
 
             if (stop || iterations == MAX_ITERATIONS) break;
-            P = (double[])X.clone();
+            P = (double[]) X.clone();
         }
     }
 
-    public static void main(String args[]){
+    public static void main(String args[]) {
 
         double[][] A = {
                 {3, 0, 4},
@@ -87,7 +94,7 @@ public class secondExercise {
 
         double[] Ab = {7, 13, -4};
 
-        double[][] B ={
+        double[][] B = {
                 {-3, 3, -6},
                 {-4, 7, -8},
                 {5, 7, -9}
@@ -139,10 +146,9 @@ public class secondExercise {
 
         Matrix Em = new Matrix(E);
         gaussSeidel(Em, Eb);
-        //jacobi(Em);
+        jacobi(Em);
 
     }
-
 
 
 }
