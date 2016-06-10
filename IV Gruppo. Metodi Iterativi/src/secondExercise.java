@@ -1,8 +1,12 @@
 import Jama.Matrix;
 import com.panayotis.gnuplot.JavaPlot;
-import com.panayotis.gnuplot.dataset.DataSet;
+import com.panayotis.gnuplot.plot.AbstractPlot;
+import com.panayotis.gnuplot.plot.DataSetPlot;
 import com.panayotis.gnuplot.plot.Graph;
-import com.sun.org.apache.xpath.internal.operations.String;
+import com.panayotis.gnuplot.plot.Plot;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 /**
  * Created by Fabio on 07/06/2016.
@@ -15,7 +19,6 @@ public class secondExercise {
     public static void gaussSeidel(Matrix A, double[] b) {
         int count = 0;
         boolean stop = false;
-        JavaPlot gaussSeidelError = new JavaPlot("C:/Program Files/gnuplot/bin/gnuplot.exe");
 
         double[] xNew = new double[b.length];
         double[] xOld = new double[b.length];
@@ -34,9 +37,6 @@ public class secondExercise {
                 }
                 xNew[i] = (b[i] - sum - sum1) * (1 / A.get(i, i));
                 System.out.println("\nSoluzioni per GaussSeidel: X_" + (i + 1) + ": " + xNew[i]);
-
-                gaussSeidelError.addPlot(String.valueOf(normInf(xNew)));
-                gaussSeidelError.plot();
 
                 count++;
 
@@ -87,17 +87,26 @@ public class secondExercise {
         }
     }
 
-    public static double normInf(double[] x){
+    public static double normInf(double[] x) {
 
         double sum = 0;
+        double[][] a = new double[100][100];
 
 
-        for (int i = 0; i<x.length; i++){
+        for (int i = 0; i < x.length; i++) {
 
             sum += Math.abs(x[i]);
+            Arrays.fill(a[i], sum);
         }
 
         System.out.println("Errore stimato per iterazione: " + sum);
+
+        JavaPlot plot = new JavaPlot("C:/Program Files/gnuplot/bin/gnuplot.exe");
+        AbstractPlot plot1 = new DataSetPlot(a);
+
+        plot.addPlot(plot1);
+        plot.plot();
+
         return sum;
     }
 
