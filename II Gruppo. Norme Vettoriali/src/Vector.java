@@ -6,8 +6,6 @@ import java.util.regex.Matcher;
  */
 public class Vector {
 
-    private double[] data;       // array of vector's components
-
 
     // test client
     public static void main(String[] args) {
