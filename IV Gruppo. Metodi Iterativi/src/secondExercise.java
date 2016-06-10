@@ -1,8 +1,4 @@
 import Jama.Matrix;
-import com.panayotis.gnuplot.JavaPlot;
-import com.panayotis.gnuplot.dataset.DataSet;
-import com.panayotis.gnuplot.plot.Graph;
-import com.sun.org.apache.xpath.internal.operations.String;
 
 /**
  * Created by Fabio on 07/06/2016.
@@ -15,7 +11,6 @@ public class secondExercise {
     public static void gaussSeidel(Matrix A, double[] b) {
         int count = 0;
         boolean stop = false;
-        JavaPlot gaussSeidelError = new JavaPlot("C:/Program Files/gnuplot/bin/gnuplot.exe");
 
         double[] xNew = new double[b.length];
         double[] xOld = new double[b.length];
@@ -32,12 +27,9 @@ public class secondExercise {
 
                     sum1 += (A.get(i, j)* xNew[j]);
                 }
+
                 xNew[i] = (b[i] - sum - sum1) * (1 / A.get(i, i));
-                System.out.println("\nSoluzioni per GaussSeidel: X_" + (i + 1) + ": " + xNew[i]);
-
-                gaussSeidelError.addPlot(String.valueOf(normInf(xNew)));
-                gaussSeidelError.plot();
-
+                System.out.println("\n Soluzioni per GaussSeidel: X_" + (i + 1) + ": " + xNew[i]);
                 count++;
 
                 if (Math.abs(xNew[i] - xOld[i]) > EPSILON) {
@@ -51,25 +43,23 @@ public class secondExercise {
 
     public static void jacobi(Matrix A){
 
-        int n = A.getRowDimension() - 1;
+        int n = 3;
         int iterations = 0;
-        double[] X = new double[A.getRowDimension()];
-        double[] P = new double[A.getRowDimension()];
+        double[] X = new double[A.getRowDimension()]; // Approximations
+        double[] P = new double[A.getRowDimension()]; // Prev
 
         while (true) {
             for (int i = 0; i < A.getRowDimension(); i++) {
-                double sum = A.get(i, n); // b_n
+                double sum = A.get(i, A.getRowDimension()); // b_n
 
                 for (int j = 0; j < A.getColumnDimension(); j++)
                     if (j != i)
                         sum -= A.get(i, j)* P[j];
 
                 X[i] = 1/A.get(i, i)* sum;
-                normInf(X);
-
             }
 
-            System.out.print("\nSoluzioni per Jacobi: X_" + iterations + " = {");
+            System.out.print("\n Soluzioni per Jacobi: X_" + iterations + " = {");
             for (int i = 0; i < A.getRowDimension(); i++)
                 System.out.print(X[i] + " ");
             System.out.println("}");
@@ -85,20 +75,6 @@ public class secondExercise {
             if (stop || iterations == MAX_ITERATIONS) break;
             P = (double[])X.clone();
         }
-    }
-
-    public static double normInf(double[] x){
-
-        double sum = 0;
-
-
-        for (int i = 0; i<x.length; i++){
-
-            sum += Math.abs(x[i]);
-        }
-
-        System.out.println("Errore stimato per iterazione: " + sum);
-        return sum;
     }
 
     public static void main(String args[]){
@@ -163,7 +139,7 @@ public class secondExercise {
 
         Matrix Em = new Matrix(E);
         gaussSeidel(Em, Eb);
-        jacobi(Em);
+        //jacobi(Em);
 
     }
 
