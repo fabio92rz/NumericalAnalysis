@@ -39,6 +39,17 @@ public class LambaPro {
     }
 
     public String GetNewtonPolynomial(){
+        String eq = differenze_divise.get(0).toString();
+        for(int i = 0; i < differenze_divise.size(); i++){
+            if(differenze_divise.get(i) > 0) eq = eq + " + " + differenze_divise.get(i);
+            else eq = eq + " " + differenze_divise.get(i);
 
+            for(int j = 0; j < i; j++){
+                eq = eq + "(x ";
+                if(punti.get(j).getX() >= 0) eq = eq + "- " + punti.get(j).getX() + ")";
+                else eq = eq + "+ " + (-punti.get(j).getX()) + ")";
+            }
+        }
+        return eq;
     }
 }
