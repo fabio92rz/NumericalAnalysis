@@ -8,9 +8,12 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeF
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionNewtonForm;
 import sun.rmi.runtime.Log;
 
+import java.awt.*;
+import java.util.List;
 import java.util.Scanner;
 
 public class interpolationActivity {
+
 
     public static void NewtonConstruction(int n, double x[], double y[], double a[]) {
         double w, p;
@@ -67,10 +70,13 @@ public class interpolationActivity {
     public static void main(String args[]) {
 
         double n;
-        double[] v = new double[200];
+        double[] v = new double[25];
+        double[] p = new double[25];
 
         double a = 2;
         double b = 3;
+
+
 
         Scanner input = new Scanner(System.in);
 
@@ -78,7 +84,7 @@ public class interpolationActivity {
         n = input.nextDouble();
 
         arrayInterval(v, n, a, b);
-        arrayFormula(v, n, a, b);
+        arrayFormula(p, n, a, b);
 
 
     }

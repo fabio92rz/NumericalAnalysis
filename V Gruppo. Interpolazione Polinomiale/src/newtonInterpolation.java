@@ -6,11 +6,11 @@ import static javafx.scene.input.KeyCode.L;
 /**
  * Created by lamba on 15/06/2016.
  */
-public class LambaPro {
+public class newtonInterpolation {
     private ArrayList<Point> punti;
     private ArrayList<Double> differenze_divise;
 
-    public LambaPro(ArrayList<Point> punti){
+    public newtonInterpolation(ArrayList<Point> punti){
         this.punti=punti;
         differenze_divise = new ArrayList<Double>();
 
