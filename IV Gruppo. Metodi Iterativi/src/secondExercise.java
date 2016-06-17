@@ -59,42 +59,51 @@ public class secondExercise {
         } while (!stop && count <= MAX_ITERATIONS);
     }
 
-    public void jacobi(Matrix A){
+    public void jacobi(Matrix A, double[] b){
 
         int n = A.getRowDimension() - 1;
         int iterations = 0;
-        double[] X = new double[A.getRowDimension()];
-        double[] P = new double[A.getRowDimension()];
+        double p = 0.0;
+        boolean stop = false;
+        double[] x_new = new double[b.length];
+        double[] x_old = new double[b.length];
 
-        while (true) {
-            for (int i = 0; i < A.getRowDimension(); i++) {
-                double sum = A.get(i, n); // b_n
+        do {
 
-                for (int j = 0; j < A.getColumnDimension(); j++)
-                    if (j != i)
-                        sum -= A.get(i, j)* P[j];
 
-                X[i] = 1/A.get(i, i)* sum;
-                normInf(X);
+
+            for (int i = 0; i < A.getRowDimension() - 1; i++) {
+                double sum = 0.0;
+                for (int j = 0 ; j<A.getRowDimension() - 1; j++){
+
+                    sum += A.get(i, j)*x_old[j];
+                }
+                for (int j = i + 1; j<A.getRowDimension(); j++){
+
+                    sum += A.get(i, j)*x_old[j];
+                }
+
+                x_new[i] = (b[i] - sum)/A.get(i, i);
+
+                p = normInf(x_new);
 
             }
 
             System.out.print("\nSoluzioni per Jacobi: X_" + iterations + " = {");
             for (int i = 0; i < A.getRowDimension(); i++)
-                System.out.print(X[i] + " ");
+                System.out.print(x_new[i] + " ");
             System.out.println("}");
+            System.out.println("Errore stimato per iterazione: " + p);
 
             iterations++;
             if (iterations == 1) continue;
 
-            boolean stop = true;
+            stop = true;
             for (int i = 0; i < A.getRowDimension() && stop; i++)
-                if (Math.abs(X[i] - P[i]) > EPSILON)
+                if (Math.abs(x_new[i] - x_old[i]) > EPSILON)
                     stop = false;
 
-            if (stop || iterations == MAX_ITERATIONS) break;
-            P = (double[])X.clone();
-        }
+        }while (!stop && iterations <= MAX_ITERATIONS);
     }
 
     public double normInf(double[] x) {
@@ -108,7 +117,6 @@ public class secondExercise {
             prova.add(sum);
 
         }
-        System.out.println("Errore stimato per iterazione: " + sum);
         return sum;
     }
 
@@ -215,7 +223,7 @@ public class secondExercise {
             System.out.println("Il sistema A non è diagonalmente dominante, il metodo non garantisce convergenza");
         }
         gaussSeidel(Am, Ab);
-        jacobi(Am);
+        jacobi(Am, Ab);
 
         Matrix Bm = new Matrix(B);
 
@@ -223,7 +231,7 @@ public class secondExercise {
             System.out.println("\nIl sistema B non è diagonalmente dominante, il metodo non garantisce convergenza");
         }
         gaussSeidel(Bm, Bb);
-        jacobi(Bm);
+        jacobi(Bm, Bb);
 
         Matrix Cm = new Matrix(C);
 
@@ -231,7 +239,7 @@ public class secondExercise {
             System.out.println("\nIl sistema C non è diagonalmente dominante, il metodo non garantisce convergenza");
         }
         gaussSeidel(Cm, Cb);
-        jacobi(Cm);
+        jacobi(Cm, Cb);
 
         Matrix Dm = new Matrix(D);
 
@@ -239,12 +247,12 @@ public class secondExercise {
             System.out.println("\nIl sistema D non è diagonalmente dominante, il metodo non garantisce convergenza");
         }
         gaussSeidel(Dm, Db);
-        jacobi(Dm);
+        jacobi(Dm, Db);
 
         Matrix Em = new Matrix(E);
 
         gaussSeidel(Em, Eb);
-        jacobi(Em);
+        jacobi(Em, Eb);
 
         try {
             FileWriter out = new FileWriter("error.dat");
