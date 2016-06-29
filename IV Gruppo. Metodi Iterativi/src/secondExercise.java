@@ -89,7 +89,7 @@ public class secondExercise {
 
             }
 
-            System.out.print("\nSoluzioni per Jacobi: X_" + iterations + " = {");
+            System.out.print("\nSoluzioni per jacobiGaussSeidel: X_" + iterations + " = {");
             for (int i = 0; i < A.getRowDimension(); i++)
                 System.out.print(x_new[i] + " ");
             System.out.println("}");
