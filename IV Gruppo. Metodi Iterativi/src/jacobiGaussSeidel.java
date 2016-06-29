@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
+import org.jlinalg.*;
 
 
 public class jacobiGaussSeidel {
@@ -114,13 +115,16 @@ public class jacobiGaussSeidel {
                         sum -= M[i][j] * P[j];
                 X[i] = 1 / M[i][i] * sum;
 
-                double asd = normInf(X)/normInf(P);
+
             }
 
             System.out.print("Soluzioni per Jacobi : X_" + iterations + " = {");
             for (int i = 0; i < n; i++)
                 System.out.print(X[i] + " ");
             System.out.println("}");
+
+            double asd = normInf(X)/normInf(P);
+            System.out.print(asd);
 
             iterations++;
             if (iterations == 1) continue;
@@ -218,9 +222,9 @@ public class jacobiGaussSeidel {
         matrix.solve();
         matrix.solveGaussSeidel();
 
-        for (int i = 0; i<graph.size(); i++){
+        //for (int i = 0; i<graph.size(); i++){
 
-            System.out.print(graph.get(i));
-        }
+         //)   System.out.print(graph.get(i));
+        //}
     }
 }
