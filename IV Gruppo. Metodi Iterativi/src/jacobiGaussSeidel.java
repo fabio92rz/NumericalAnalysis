@@ -24,12 +24,36 @@
   to convert it(if possible) by rearranging the rows.
 */
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealVector;
+import sun.plugin.javascript.navig.Array;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
-import org.jlinalg.*;
+
+/**Questa classe fornisce una semplice implementazione del metodo di Jacobi per
+ * risolvere sistemi di equazioni lineari.*/
+
+/**
+  Istruzioni:
+
+  Il programma legge una matrice aumentata dall'input,
+  Per esempio:
+
+   3
+   5 -2  3 -1
+  -3  9  1  2
+   2 -1 -7  3
+
+  Il primo numero equivale al numero dell'equazioni e delle variabili
+
+  Se la matrice non è diagonalmente dominante, il programma prova a convertirla
+  (se possibile) riordinando le righe.
+*/
 
 
 public class jacobiGaussSeidel {
@@ -43,6 +67,8 @@ public class jacobiGaussSeidel {
     }
 
 
+    /**Metodo per stampare la matrice**/
+
     public void print() {
         int n = M.length;
         for (int i = 0; i < n; i++) {
@@ -51,6 +77,8 @@ public class jacobiGaussSeidel {
             System.out.println();
         }
     }
+
+    /**Metodo per transformarla in diagonale dominante**/
 
     public boolean transformToDominant(int r, boolean[] V, int[] R) {
         int n = M.length;
@@ -97,14 +125,29 @@ public class jacobiGaussSeidel {
         return transformToDominant(0, visited, rows);
     }
 
+    /**
+     * Si applica il metodo di Jacobi per trovare la soluzione di un
+     * sistema lineare di equazioni rappresentato nella matrice M.
+     * M è una matrice in questa forma:
+     * a_11 * x_1 + a_12 * x_2 + ... + a_1n * x_n = b_1
+     * a_21 * x_1 + a_22 * x_2 + ... + a_2n * x_n = b_2
+     * .                 .                  .        .
+     * .                 .                  .        .
+     * .                 .                  .        .
+     * a_n1 * x_n + a_n2 * x_2 + ... + a_nn * x_n = b_n
+     */
+
     public void solve() {
         int iterations = 0;
         int n = M.length;
         double epsilon = 1e-15;
         double[] X = new double[n];
         double[] P = new double[n];
+        double[] prev = new double[n];
+        double err = 0.0;
         Arrays.fill(X, 0);
         Arrays.fill(P, 0);
+        Arrays.fill(prev, 0);
 
         while (true) {
             for (int i = 0; i < n; i++) {
@@ -115,16 +158,18 @@ public class jacobiGaussSeidel {
                         sum -= M[i][j] * P[j];
                 X[i] = 1 / M[i][i] * sum;
 
-
+                prev[i] = X[i];
             }
 
-            System.out.print("Soluzioni per Jacobi : X_" + iterations + " = {");
-            for (int i = 0; i < n; i++)
+            System.out.print("\nSoluzioni per Jacobi : X_" + iterations + " = {");
+            for (int i = 0; i < n; i++){
                 System.out.print(X[i] + " ");
+            }
             System.out.println("}");
 
-            double asd = normInf(X)/normInf(P);
-            System.out.print(asd);
+            for (int i = 0; i<n; i++){
+                System.out.print("\nVettore precedente = " + prev[i]);
+            }
 
             iterations++;
             if (iterations == 1) continue;
@@ -138,6 +183,19 @@ public class jacobiGaussSeidel {
             P = (double[]) X.clone();
         }
     }
+
+    /**
+     * Si applica il metodo di Gauss Seidel per trovare la soluzione di un
+     * sistema lineare di equazioni rappresentato nella matrice M.
+     * M è una matrice in questa forma:
+     * a_11 * x_1 + a_12 * x_2 + ... + a_1n * x_n = b_1
+     * a_21 * x_1 + a_22 * x_2 + ... + a_2n * x_n = b_2
+     * .                 .                  .        .
+     * .                 .                  .        .
+     * .                 .                  .        .
+     * a_n1 * x_n + a_n2 * x_2 + ... + a_nn * x_n = b_n
+     */
+
 
     public void solveGaussSeidel() {
         int iterations = 0;
@@ -177,14 +235,17 @@ public class jacobiGaussSeidel {
         }
     }
 
+    /**Norma infinito di un vettore per calcolare l'errore relativo
+     * per ogni iterezaione.*/
+
     public double normInf(double[] x) {
 
         double sum = 0;
+        RealVector sum2 = MatrixUtils.createRealVector(x);
 
-        for (int i = 0; i < x.length; i++) {
-            sum += Math.abs(x[i]);
-            graph.add(sum);
-        }
+        sum = sum2.getLInfNorm();
+        graph.add(sum);
+
         return sum;
     }
 
@@ -221,10 +282,5 @@ public class jacobiGaussSeidel {
         matrix.print();
         matrix.solve();
         matrix.solveGaussSeidel();
-
-        //for (int i = 0; i<graph.size(); i++){
-
-         //)   System.out.print(graph.get(i));
-        //}
     }
 }
