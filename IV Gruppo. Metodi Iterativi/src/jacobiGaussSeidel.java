@@ -60,7 +60,8 @@ public class jacobiGaussSeidel {
 
     public static final int MAX_ITERATIONS = 100;
     private double[][] M;
-    public static List<Double> graph = new ArrayList<>();
+    public static List<Double> graphJacobi = new ArrayList<>();
+    public static List<Double> graphGaussSeidel = new ArrayList<>();
 
     public jacobiGaussSeidel(double[][] matrix) {
         M = matrix;
@@ -156,20 +157,19 @@ public class jacobiGaussSeidel {
                 for (int j = 0; j < n; j++)
                     if (j != i)
                         sum -= M[i][j] * P[j];
-                X[i] = 1 / M[i][i] * sum;
 
                 prev[i] = X[i];
+                X[i] = 1 / M[i][i] * sum;
+
+                prev[i] -= X[i];
+                err = normInfJacobi(prev)/normInfJacobi(X);
             }
 
-            System.out.print("\nSoluzioni per Jacobi : X_" + iterations + " = {");
+            System.out.print("Soluzioni per Jacobi : X_" + iterations + " = {");
             for (int i = 0; i < n; i++){
                 System.out.print(X[i] + " ");
             }
             System.out.println("}");
-
-            for (int i = 0; i<n; i++){
-                System.out.print("\nVettore precedente = " + prev[i]);
-            }
 
             iterations++;
             if (iterations == 1) continue;
@@ -201,10 +201,14 @@ public class jacobiGaussSeidel {
         int iterations = 0;
         int n = M.length;
         double epsilon = 1e-15;
+        double err = 0.0;
         double[] X = new double[n];
         double[] P = new double[n];
+        double[] prev = new double[n];
+
         Arrays.fill(X, 0);
         Arrays.fill(P, 0);
+        Arrays.fill(prev, 0);
 
         while (true) {
             for (int i = 0; i < n; i++) {
@@ -214,7 +218,12 @@ public class jacobiGaussSeidel {
                     if (j != i)
                         sum -= M[i][j] * X[j];
 
+                prev[i] = X[i];
                 X[i] = 1 / M[i][i] * sum;
+
+                prev[i] -= X[i];
+                err = normInfGaussSeidel(prev)/normInfGaussSeidel(X);
+
             }
 
             System.out.print("Soluzioni per Gauss Seidel: X_" + iterations + " = {");
@@ -238,13 +247,24 @@ public class jacobiGaussSeidel {
     /**Norma infinito di un vettore per calcolare l'errore relativo
      * per ogni iterezaione.*/
 
-    public double normInf(double[] x) {
+    public double normInfJacobi(double[] x) {
 
         double sum = 0;
         RealVector sum2 = MatrixUtils.createRealVector(x);
 
         sum = sum2.getLInfNorm();
-        graph.add(sum);
+        graphJacobi.add(sum);
+
+        return sum;
+    }
+
+    public double normInfGaussSeidel(double[] x) {
+
+        double sum = 0;
+        RealVector sum2 = MatrixUtils.createRealVector(x);
+
+        sum = sum2.getLInfNorm();
+        graphGaussSeidel.add(sum);
 
         return sum;
     }
@@ -282,5 +302,29 @@ public class jacobiGaussSeidel {
         matrix.print();
         matrix.solve();
         matrix.solveGaussSeidel();
+
+        try {
+            FileWriter out = new FileWriter("errorJacobi.dat");
+
+            for (double i : graphJacobi){
+
+                out.write(String.format("%f\n", i));
+            }
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            FileWriter out = new FileWriter("errorGaussSeidel.dat");
+
+            for (double i : graphGaussSeidel){
+
+                out.write(String.format("%f\n", i));
+            }
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

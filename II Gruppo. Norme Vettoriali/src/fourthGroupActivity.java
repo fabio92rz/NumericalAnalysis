@@ -1,48 +1,47 @@
 import Jama.Matrix;
 import com.panayotis.gnuplot.JavaPlot;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by fabio on 17/05/2016.
  */
 public class fourthGroupActivity {
-
-
     public static void main(String[] args) {
 
+        List<Double> graph = new ArrayList<>();
 
-        double[][] A = {
-                { 4, -1,  2 },
-                { 1, 3,  1 },
-                { 0, -3, 5 }
-        };
+        /** Ciclo per il calcolo dell'indice di condizionamento della matrice di Hillbert da N = 2 */
+        for (int n = 2; n <= 10; n++) {
 
-        double[][] B = {
-                {1, 2, 0, 0},
-                {3, 4, 5, 0},
-                {0, 4, 5, 6},
-                {0, 0, 4, 3}
-        };
+            double condition = condition(hillbertMatrix(n));
+            graph.add(condition);
+        }
 
-        double[][] C = {
-                { 4, 1,  0, 0, 0},
-                { 1, 5,  3, 0, 0},
-                { 0, 3, 15, 3, 0},
-                { 0, 0, 5, 6, 1 },
-                { 0, 0, 0, 5, 6 }
-        };
+        /** Salvataggio del file conditio.dat, necessario per il plotting */
+        try {
+            FileWriter out = new FileWriter("condition.dat");
 
-        Matrix f = new Matrix(A);
-        double cond2 = condition(f);
-        double cond3 = condition(hillbertMatrix(8));
-        double cond4 = condition(hillbertMatrix(6));
-        double cond5 = condition(hillbertMatrix(7));
+            for (double i : graph) {
 
-        JavaPlot p = new JavaPlot("C:/Program Files/gnuplot/bin/gnuplot.exe");
+                out.write(String.format("%f\n", i));
+            }
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
-    public static double condition(Matrix m){
+    /**
+     * Metodo per il caloco dell'indice di condizionamento
+     */
+
+    public static double condition(Matrix m) {
 
         double cond = 0;
         double normInf = m.normInf();
@@ -51,9 +50,9 @@ public class fourthGroupActivity {
         double normInfN = n.normInf();
 
 
-        if (normInfN != 0){
+        if (normInfN != 0) {
 
-            cond = normInf*normInfN;
+            cond = normInf * normInfN;
 
         }
 
@@ -62,9 +61,12 @@ public class fourthGroupActivity {
         return cond;
     }
 
-    public static Matrix hillbertMatrix(int n){
+    /**
+     * Metodo per la creazine della Matrice di Hillbert di ordine N
+     */
+    public static Matrix hillbertMatrix(int n) {
 
-        Matrix A = new Matrix(0,0);
+        Matrix A = new Matrix(0, 0);
         double[][] a = new double[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {

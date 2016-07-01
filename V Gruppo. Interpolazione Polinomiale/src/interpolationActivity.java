@@ -55,16 +55,18 @@ public class interpolationActivity {
 
     public static void arrayFormula(double[] v, double n, double a, double b){
 
-        for (int i = 0; i<v.length; i++){
+        for (int i = 0; i<v.length-1; i++){
 
-            v[i] = ((b-a)*Math.cos(((2.0*(n-1.0-i)+1.0)*(3.14159))/(2.0*(n)))+(b+a))/2.0;
+            v[i+1] = ((b-a)*Math.cos(((2.0*(n-1.0-i)+1.0)*(3.14159))/(2.0*(n)))+(b+a))/2.0;
         }
 
         for (int j = 0; j<v.length; j++){
 
-            System.out.print(v[j]);
+            System.out.print("\n" + v[j]);
         }
     }
+
+
 
 
     public static void main(String args[]) {
