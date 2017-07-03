@@ -22,7 +22,22 @@ import org.jfree.ui.RefineryUtilities;
  * Created by fabio on 26/06/2016.
  */
 public class Main extends JFrame {
-    final int size = 25;
+    final int size = 200;
+
+    private XYDataset createDataset(int n) {
+        final XYSeriesCollection dataset = new XYSeriesCollection();
+//        dataset.addSeries(newtonify(createDataSeries(new F2(-10, 10), n), "F2 [-10,10] Newton"));
+//      dataset.addSeries(newtonify(createPoints(new F2(-1, 1), size), createDataSeries(new F2(-1, 1), n), "F2 [-1,1] Newton"));
+//      dataset.addSeries(toGraph(createPoints(new F2(-10, 10), size), "F2 [-10,10]"));
+//      dataset.addSeries(toGraph(createPoints(new F2(-1, 1), size), "F2 [-1,1]"));
+        dataset.addSeries(toGraph(createDataSeries(new F1(-1, 1), n), "F1 [-1,1] Newton Points"));
+        dataset.addSeries(toGraph(createDataSeries(new F3(2, 3), n), "F3 Newton Points"));
+        dataset.addSeries(newtonify(createPoints(new F1(-1, 1), size), createDataSeries(new F1(-1, 1), n), "F1 [-1,1] Newton Approximation"));
+        dataset.addSeries(newtonify(createPoints(new F3(2, 3), size), createDataSeries(new F3(2, 3), n), "F3 Newton Approximation"));
+        dataset.addSeries(toGraph(createPoints(new F1(-1, 1), size), "F1 [-1,1]"));
+        dataset.addSeries(toGraph(createPoints(new F3(2, 3), size), "F3"));
+        return dataset;
+    }
 
     public Main(String applicationTitle, String chartTitle, int n) {
         super(applicationTitle);
@@ -44,6 +59,11 @@ public class Main extends JFrame {
         renderer.setSeriesPaint(3, Color.BLUE);
         renderer.setSeriesPaint(4, Color.WHITE);
         renderer.setSeriesPaint(5, Color.BLACK);
+        renderer.setBaseShapesVisible(false);
+        renderer.setSeriesShapesVisible(0, true);
+        renderer.setSeriesShapesVisible(1, true);
+        renderer.setSeriesLinesVisible(0, false);
+        renderer.setSeriesLinesVisible(1, false);
         renderer.setSeriesStroke(0, new BasicStroke(2.0f));
         renderer.setSeriesStroke(1, new BasicStroke(2.0f));
         renderer.setSeriesStroke(2, new BasicStroke(2.0f));
@@ -121,7 +141,7 @@ public class Main extends JFrame {
         double getY(double x) {
             if (!range.contains(x))
                 throw new RuntimeException("Invalid x");
-            return x / (1+ 25*x*x);
+            return 1 / (1+ 25*x*x);
         }
     }
 
@@ -135,7 +155,7 @@ public class Main extends JFrame {
 
     private java.util.List<Point2D.Double> createDataSeries(Function function, int n){
         java.util.List<Point2D.Double> series = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i <= n; i++) {
             double x = getXi(function.getRange(), i, n);
             series.add(new Point2D.Double(x, function.getY(x)));
         }
@@ -164,19 +184,6 @@ public class Main extends JFrame {
             series.add(p.x, p.y);
         }
         return series;
-    }
-
-    private XYDataset createDataset(int n) {
-        final XYSeriesCollection dataset = new XYSeriesCollection();
-//        dataset.addSeries(newtonify(createDataSeries(new F2(-10, 10), n), "F2 [-10,10] Newton"));
-        dataset.addSeries(newtonify(createPoints(new F1(-1, 1), size), createDataSeries(new F1(-1, 1), n), "F1 [-1,1] Newton"));
-//        dataset.addSeries(newtonify(createPoints(new F2(-1, 1), size), createDataSeries(new F2(-1, 1), n), "F2 [-1,1] Newton"));
-        dataset.addSeries(newtonify(createPoints(new F3(2, 3), size), createDataSeries(new F3(2, 3), n), "F3 Newton"));
-//        dataset.addSeries(toGraph(createPoints(new F2(-10, 10), size), "F2 [-10,10]"));
-        dataset.addSeries(toGraph(createPoints(new F1(-1, 1), size), "F1 [-1,1]"));
-//        dataset.addSeries(toGraph(createPoints(new F2(-1, 1), size), "F2 [-1,1]"));
-        dataset.addSeries(toGraph(createPoints(new F3(2, 3), size), "F3"));
-        return dataset;
     }
 
 //    private static class Point {
@@ -232,11 +239,13 @@ public class Main extends JFrame {
 		return newSeries;
 		}
 
-    public static void main(String[] args) {
-        Main chart = new Main("Newton approximation", "Newton approximation", 25);
-        chart.pack();
-        RefineryUtilities.centerFrameOnScreen(chart);
-        chart.setVisible(true);
-    }
+	public static void main(String[] args)
+		{
+		int interpolationPoints = 25;
+		Main chart = new Main("Newton approximation", "Newton approximation", interpolationPoints);
+		chart.pack();
+		RefineryUtilities.centerFrameOnScreen(chart);
+		chart.setVisible(true);
+		}
 
 }
