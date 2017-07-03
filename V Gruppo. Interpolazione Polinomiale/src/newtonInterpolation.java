@@ -1,8 +1,6 @@
 import java.awt.*;
 import java.util.ArrayList;
 
-import static javafx.scene.input.KeyCode.L;
-
 /**
  * Created by lamba on 15/06/2016.
  */

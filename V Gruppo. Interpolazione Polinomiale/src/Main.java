@@ -1,3 +1,12 @@
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -9,16 +18,11 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RefineryUtilities;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
-import java.util.List;
-
 /**
  * Created by fabio on 26/06/2016.
  */
 public class Main extends JFrame {
-    final int size = 49;
+    final int size = 25;
 
     public Main(String applicationTitle, String chartTitle, int n) {
         super(applicationTitle);
@@ -37,9 +41,15 @@ public class Main extends JFrame {
         renderer.setSeriesPaint(0, Color.RED);
         renderer.setSeriesPaint(1, Color.GREEN);
         renderer.setSeriesPaint(2, Color.YELLOW);
-        renderer.setSeriesStroke(0, new BasicStroke(4.0f));
-        renderer.setSeriesStroke(1, new BasicStroke(3.0f));
+        renderer.setSeriesPaint(3, Color.BLUE);
+        renderer.setSeriesPaint(4, Color.WHITE);
+        renderer.setSeriesPaint(5, Color.BLACK);
+        renderer.setSeriesStroke(0, new BasicStroke(2.0f));
+        renderer.setSeriesStroke(1, new BasicStroke(2.0f));
         renderer.setSeriesStroke(2, new BasicStroke(2.0f));
+        renderer.setSeriesStroke(3, new BasicStroke(2.0f));
+        renderer.setSeriesStroke(4, new BasicStroke(2.0f));
+        renderer.setSeriesStroke(5, new BasicStroke(2.0f));
         plot.setRenderer(renderer);
         setContentPane(chartPanel);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -101,29 +111,43 @@ public class Main extends JFrame {
         }
     }
 
+    private static class F1 extends Function {
+
+    	F1(double from, double to) {
+            super(from, to);
+        }
+
+        @Override
+        double getY(double x) {
+            if (!range.contains(x))
+                throw new RuntimeException("Invalid x");
+            return x / (1+ 25*x*x);
+        }
+    }
+
     private double getXiForSmallInterval(int i, int n) {
-        return Math.cos(Math.PI * (2*(n-i)+1) / (2*(n+1)));
+        return Math.cos(Math.PI * ((2d*(n-i)+1d) / (2d*(n+1d))));
     }
 
     private double getXiForLargeInterval(Range range, int i, int n) {
         return 0.5*(range.to - range.from) * getXiForSmallInterval(i, n) + 0.5d*(range.from + range.to);
     }
 
-    private java.util.List<Point> createDataSeries(Function function, int n){
-        java.util.List<Point> series = new ArrayList<>();
+    private java.util.List<Point2D.Double> createDataSeries(Function function, int n){
+        java.util.List<Point2D.Double> series = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             double x = getXi(function.getRange(), i, n);
-            series.add(new Point(x, function.getY(x)));
+            series.add(new Point2D.Double(x, function.getY(x)));
         }
         return series;
     }
-    private java.util.List<Point> createPoints(Function function, int n){
-        java.util.List<Point> series = new ArrayList<>();
+    private java.util.List<Point2D.Double> createPoints(Function function, int n){
+        java.util.List<Point2D.Double> series = new ArrayList<>();
         double x0 = function.getRange().from;
         double xto = function.getRange().to;
-        for (int i = 1 ; i < size ; i++) {
-            final double x = x0 + (xto - x0) / size * i;
-            series.add(new Point(x,function.getY(x)));
+        for (int i = 1 ; i < n ; i++) {
+            final double x = x0 + (xto - x0) / n * i;
+            series.add(new Point2D.Double(x,function.getY(x)));
         }
         return series;
     }
@@ -134,9 +158,9 @@ public class Main extends JFrame {
         return getXiForLargeInterval(range, i, n);
     }
 
-    private XYSeries toGraph(java.util.List<Point> points, String title){
+    private XYSeries toGraph(java.util.List<Point2D.Double> points, String title){
         XYSeries series = new XYSeries(title);
-        for (Point p : points) {
+        for (Point2D.Double p : points) {
             series.add(p.x, p.y);
         }
         return series;
@@ -145,21 +169,23 @@ public class Main extends JFrame {
     private XYDataset createDataset(int n) {
         final XYSeriesCollection dataset = new XYSeriesCollection();
 //        dataset.addSeries(newtonify(createDataSeries(new F2(-10, 10), n), "F2 [-10,10] Newton"));
-        dataset.addSeries(newtonify(createDataSeries(new F2(-1, 1), n), "F2 [-1,1] Newton"));
-        dataset.addSeries(newtonify(createDataSeries(new F3(2, 3), n), "F3 Newton"));
+        dataset.addSeries(newtonify(createPoints(new F1(-1, 1), size), createDataSeries(new F1(-1, 1), n), "F1 [-1,1] Newton"));
+//        dataset.addSeries(newtonify(createPoints(new F2(-1, 1), size), createDataSeries(new F2(-1, 1), n), "F2 [-1,1] Newton"));
+        dataset.addSeries(newtonify(createPoints(new F3(2, 3), size), createDataSeries(new F3(2, 3), n), "F3 Newton"));
 //        dataset.addSeries(toGraph(createPoints(new F2(-10, 10), size), "F2 [-10,10]"));
-        dataset.addSeries(toGraph(createPoints(new F2(-1, 1), size), "F2 [-1,1]"));
+        dataset.addSeries(toGraph(createPoints(new F1(-1, 1), size), "F1 [-1,1]"));
+//        dataset.addSeries(toGraph(createPoints(new F2(-1, 1), size), "F2 [-1,1]"));
         dataset.addSeries(toGraph(createPoints(new F3(2, 3), size), "F3"));
         return dataset;
     }
 
-    private static class Point {
-        double x, y;
-        Point(double x, double y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
+//    private static class Point {
+//        double x, y;
+//        Point(double x, double y) {
+//            this.x = x;
+//            this.y = y;
+//        }
+//    }
 
     /*
     p := y[0];
@@ -174,36 +200,40 @@ public class Main extends JFrame {
         od;
      */
 
-    double recursiveDifference(double x, java.util.List<Point> points) {
-        double result = points.get(0).y;
-        double f = 1;
-        double[] as = new double[points.size()];
-        for (int i = 0; i < points.size(); i++) {
-            as[i] = points.get(i).y;
-            for (int j = points.size() -1; j >= i+1; j--){
-                as[j] = (as[j] - as[j-1]) / (points.get(j).x - points.get(j-i-1).x);
-            }
-            f *= (x - points.get(i).x);
-            result += as[i] * f;
-        }
-        return result;
-    }
+	double recursiveDifference(java.util.List<Point2D.Double> points, int from, int to)
+		{
+		if (from == to)
+			return points.get(from).y;
+		if (from == to - 1)
+			return (points.get(to).y - points.get(from).y) / (points.get(to).x - points.get(from).x);
+		return (recursiveDifference(points, from + 1, to) - recursiveDifference(points, from, to - 1))
+				/ (points.get(to).x - points.get(from).x);
+		}
 
-    private XYSeries newtonify(java.util.List<Point> points, String title) {
-        java.util.List<Double> xs = new ArrayList<>();
-        for (Point p : points) {
-            xs.add(p.x);
-        }
-        XYSeries newSeries = new XYSeries(title);
-        for (int i = 1 ; i < size ; i++) {
-            final double x = xs.get(0) + (xs.get(xs.size()-1) - xs.get(0)) / size * i;
-            newSeries.add(x,recursiveDifference(x, points));
-        }
-        return newSeries;
-    }
+	private XYSeries newtonify(java.util.List<Point2D.Double> points, java.util.List<Point2D.Double> source, String title)
+		{
+		XYSeries newSeries = new XYSeries(title);
+		List<Double> recs = new ArrayList<>();
+		for (int i = 0; i < source.size(); i++)
+			recs.add(recursiveDifference(source, 0, i));
+		for (Point2D.Double p : points)
+			{
+			double y = 0;
+			double x = p.x;;
+			for (int i = 0; i < source.size(); i++)
+				{
+				double rec = recs.get(i);
+				for (int j = 0; j < i; j++)
+					rec *= x - source.get(j).x;
+				y += rec;
+				}
+			newSeries.add(x, y);
+			}
+		return newSeries;
+		}
 
     public static void main(String[] args) {
-        Main chart = new Main("Newton approximation", "Newton approximation", 16);
+        Main chart = new Main("Newton approximation", "Newton approximation", 25);
         chart.pack();
         RefineryUtilities.centerFrameOnScreen(chart);
         chart.setVisible(true);
